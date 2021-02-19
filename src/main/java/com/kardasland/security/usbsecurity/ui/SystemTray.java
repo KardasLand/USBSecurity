@@ -72,7 +72,7 @@ public class SystemTray {
                 System.out.println("TrayIcon could not be added.");
                 return;
             }
-
+            //Adding listeners
             trayIcon.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     JOptionPane.showMessageDialog(null, "Anti-USB Software 1.0\nDeveloped by KardasLand", "Anti USB", JOptionPane.INFORMATION_MESSAGE);
@@ -88,7 +88,7 @@ public class SystemTray {
                 }
             });
 
-            //trayIcon.displayMessage("Sun TrayIcon Demo","This is a warning message", TrayIcon.MessageType.WARNING );
+            //Changing states
             acikItem.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
@@ -154,7 +154,6 @@ public class SystemTray {
 
     public void changeState(boolean state) {
         if (state) {
-            //kilit açıldı
             JOptionPane.showMessageDialog(null, "Başarıyla kilidi açtın.", "Başarılı!", JOptionPane.INFORMATION_MESSAGE);
             usbListener.setEnabled(true);
             fileUtils.changeActiveState(1);
