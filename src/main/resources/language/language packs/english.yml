@@ -1,0 +1,24 @@
+register:
+  title: "Register"
+  message: "Please register a password:"
+  empty: "Password cannot be empty! Please try again."
+  success: "Saved successfully! You will use this password later on."
+login:
+  title: "Login"
+  message: "Please enter a password to login:"
+  wrong: "Wrong password! Try again."
+lock:
+  onMessage: "Opened lock successfully."
+  offMessage: "Disabled lock successfully."
+  enterPasswordTitle: "Disable Lock"
+  enterPassword: "Enter password to disable:"
+  preventedUSB: "Computer is not accepting USB drives."
+systemTray:
+  about: "About"
+  lockState: "Lock State"
+  onTitle: "On"
+  offTitle: "Off"
+  quit: "Quit"
+panelTitles:
+  success: "Success!"
+  error: "Error!"

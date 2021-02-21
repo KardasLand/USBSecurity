@@ -19,8 +19,13 @@ public class EncryptionUtils {
         return BCrypt.withDefaults().hashToString(16, password.toCharArray());
     }
     public boolean isCorrect(String password, String hash) {
-        BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), hash);
-        return result.verified;
+            try {
+                BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), hash);
+                return result.verified;
+            }catch (NullPointerException ex){
+                System.exit(-1);
+                return false;
+            }
     }
     
 }

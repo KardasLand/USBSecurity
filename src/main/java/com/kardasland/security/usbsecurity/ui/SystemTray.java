@@ -7,7 +7,7 @@ package com.kardasland.security.usbsecurity.ui;
 
 import com.kardasland.security.usbsecurity.Launcher;
 import static com.kardasland.security.usbsecurity.Launcher.fileUtils;
-import com.kardasland.security.usbsecurity.utils.USBListener;
+import com.kardasland.security.usbsecurity.listener.USBListener;
 import java.awt.AWTException;
 import java.awt.CheckboxMenuItem;
 import java.awt.Image;
@@ -15,10 +15,7 @@ import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +31,6 @@ public class SystemTray {
     public USBListener usbListener;
     public void setSystemTray() {
         try {
-            //Check the SystemTray support
             if (!java.awt.SystemTray.isSupported()) {
                 System.out.println("SystemTray is not supported");
                 return;
@@ -45,20 +41,14 @@ public class SystemTray {
                     = new TrayIcon(icon);
             final java.awt.SystemTray tray = java.awt.SystemTray.getSystemTray();
 
-            // Create a popup menu components
-            MenuItem aboutItem = new MenuItem("Hakkında");
-            //MenuItem cb1 = new MenuItem("Menüyü Aç");
-            //CheckboxMenuItem cb2 = new CheckboxMenuItem("Şifre Değiştir");
-            Menu displayMenu = new Menu("Kilit Durumu");
-            CheckboxMenuItem acikItem = new CheckboxMenuItem("Açık");
-            CheckboxMenuItem kapaliItem = new CheckboxMenuItem("Kapalı");
-            MenuItem exitItem = new MenuItem("Çıkış");
+            MenuItem aboutItem = new MenuItem(Launcher.language.systemTray.about);
+            Menu displayMenu = new Menu(Launcher.language.systemTray.lockState);
+            CheckboxMenuItem acikItem = new CheckboxMenuItem(Launcher.language.systemTray.onTitle);
+            CheckboxMenuItem kapaliItem = new CheckboxMenuItem(Launcher.language.systemTray.offTitle);
+            MenuItem exitItem = new MenuItem(Launcher.language.systemTray.quit);
 
-            //Add components to popup menu
             popup.add(aboutItem);
             popup.addSeparator();
-            //popup.add(cb1);
-            //popup.add(cb2);
             popup.add(displayMenu);
             displayMenu.add(acikItem);
             displayMenu.add(kapaliItem);
@@ -72,80 +62,46 @@ public class SystemTray {
                 System.out.println("TrayIcon could not be added.");
                 return;
             }
-            //Adding listeners
-            trayIcon.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showMessageDialog(null, "Anti-USB Software 1.0\nDeveloped by KardasLand", "Anti USB", JOptionPane.INFORMATION_MESSAGE);
-                }
-            });
 
-            aboutItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showMessageDialog(null, "Anti-USB Software 1.0\nDeveloped by KardasLand", "Anti USB", JOptionPane.INFORMATION_MESSAGE);
+            trayIcon.addActionListener(e -> JOptionPane.showMessageDialog(null, "Anti-USB Software 1.0\nDeveloped by KardasLand", "Anti USB", JOptionPane.INFORMATION_MESSAGE));
 
-                    //new MainMenu().setVisible(true);
-                }
-            });
+            aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(null, "Anti-USB Software 1.0\nDeveloped by KardasLand", "Anti USB", JOptionPane.INFORMATION_MESSAGE));
 
-            //Changing states
-            acikItem.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    int changed = e.getStateChange();
-                    if (changed == ItemEvent.SELECTED) {
-                        kapaliItem.setState(false);
-                        changeState(true);
-                    } else {
-                        boolean i = kapaliItem.getState();
-                        if (i == false) {
-                            acikItem.setState(true);
-                        }
+            acikItem.addItemListener(e -> {
+                int changed = e.getStateChange();
+                if (changed == ItemEvent.SELECTED) {
+                    kapaliItem.setState(false);
+                    changeState(true);
+                } else {
+                    boolean i = kapaliItem.getState();
+                    if (!i) {
+                        acikItem.setState(true);
                     }
                 }
-
             });
-            kapaliItem.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    int changed = e.getStateChange();
-                    if (changed == ItemEvent.SELECTED) {
-                        acikItem.setState(false);
-                        changeState(false);
-                    } else {
-                        boolean i = acikItem.getState();
-                        if (i == false) {
-                            kapaliItem.setState(true);
-                        }
+
+            kapaliItem.addItemListener(e -> {
+                int changed = e.getStateChange();
+                if (changed == ItemEvent.SELECTED) {
+                    acikItem.setState(false);
+                    changeState(false);
+                } else {
+                    boolean i = acikItem.getState();
+                    if (!i) {
+                        kapaliItem.setState(true);
                     }
                 }
+            });
 
+            exitItem.addActionListener(e -> {
+                tray.remove(trayIcon);
+                System.exit(0);
             });
-            /*
-            cb1.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    tray.remove(trayIcon);
-                    setVisible(true);
-                    setExtendedState(JFrame.NORMAL);
-                }
-            });
-             */
 
-            exitItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    tray.remove(trayIcon);
-                    System.exit(0);
-                }
-            });
-            
-            if (Launcher.fileUtils.getActive() == 1) {
-                usbListener = new USBListener(true);
-                acikItem.setState(true);
-            }else {
-                usbListener = new USBListener(false);
-                kapaliItem.setState(true);
-            }
+            boolean active = Launcher.configManager.isActive();
+            usbListener = new USBListener(active);
+            (active ? acikItem : kapaliItem).setState(true);
+
             usbListener.start();
         } catch (IOException ex) {
             Logger.getLogger(SystemTray.class.getName()).log(Level.SEVERE, null, ex);
@@ -154,23 +110,21 @@ public class SystemTray {
 
     public void changeState(boolean state) {
         if (state) {
-            JOptionPane.showMessageDialog(null, "Başarıyla kilidi açtın.", "Başarılı!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, Launcher.language.lock.onMessage, Launcher.language.panelTitles.success, JOptionPane.INFORMATION_MESSAGE);
             usbListener.setEnabled(true);
-            fileUtils.changeActiveState(1);
+            Launcher.configManager.set("lock", true);
+            Launcher.configManager.save();
         } else {
-            changeStateLogin();
-        }
-    }
-    
-    public void changeStateLogin() {
-        String password = JOptionPane.showInputDialog(null, "Kapatmak için şifrenizi girin:", "Kilidi Kapatma", JOptionPane.PLAIN_MESSAGE);
-        if (Launcher.encryptionUtils.isCorrect(password, fileUtils.getHash())) {
-            usbListener.setEnabled(false);
-            JOptionPane.showMessageDialog(null, "Başarıyla kilidi kapattın.", "Başarılı!", JOptionPane.INFORMATION_MESSAGE);
-        }else {
-            JOptionPane.showMessageDialog(null, "Şifre hatalı! Tekrar deneyin.", "Hatalı!", JOptionPane.ERROR_MESSAGE);
-            changeStateLogin();
-            fileUtils.changeActiveState(0);
+            String password = JOptionPane.showInputDialog(null, Launcher.language.lock.enterPassword, Launcher.language.lock.enterPasswordTitle, JOptionPane.PLAIN_MESSAGE);
+            if (Launcher.encryptionUtils.isCorrect(password, fileUtils.getHash())) {
+                usbListener.setEnabled(false);
+                JOptionPane.showMessageDialog(null, Launcher.language.lock.offMessage, Launcher.language.panelTitles.success, JOptionPane.INFORMATION_MESSAGE);
+                Launcher.configManager.set("lock", false);
+                Launcher.configManager.save();
+            }else {
+                JOptionPane.showMessageDialog(null, Launcher.language.login.wrong, Launcher.language.panelTitles.error, JOptionPane.ERROR_MESSAGE);
+                changeState(state);
+            }
         }
     }
 }

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kardasland.security</groupId>
     <artifactId>USBSecurity</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,21 +14,6 @@
     
 <build>
     <plugins>
-        <!--
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-jar-plugin</artifactId>
-    <version>2.3.2</version>
-    <configuration>
-        <archive>
-            <manifest>
-                <addClasspath>true</addClasspath>
-                <mainClass>com.kardasland.security.usbsecurity.Launcher</mainClass>
-            </manifest>
-        </archive>
-    </configuration>
-</plugin>
-                -->
         <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <configuration>
@@ -43,8 +28,8 @@
             </configuration>
             <executions>
                 <execution>
-                    <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                    <phase>package</phase> <!-- bind to the packaging phase -->
+                    <id>make-assembly</id>
+                    <phase>package</phase>
                     <goals>
                         <goal>single</goal>
                     </goals>
@@ -64,6 +49,11 @@
             <groupId>net.samuelcampos</groupId>
             <artifactId>usbdrivedetector</artifactId>
             <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.27</version>
         </dependency>
     </dependencies>
 </project>

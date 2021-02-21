@@ -1,0 +1,24 @@
+register:
+  title: "Kayıt"
+  message: "Lütfen bir şifre belirleyin:"
+  empty: "Şifre boş olamaz! Tekrar deneyin."
+  success: "Başarıyla kaydettiniz! Bundan sonra bu şifreyi kullanacaksınız."
+login:
+  title: "Giriş bruh moment"
+  message: "Giriş için şifrenizi girin:"
+  wrong: "Şifre hatalı! Tekrar deneyin."
+lock:
+  onMessage: "Başarıyla kilidi açtın."
+  offMessage: "Başarıyla kilidi kapattın."
+  enterPasswordTitle: "Kilidi Kapatma"
+  enterPassword: "Kapatmak için şifrenizi girin:"
+  preventedUSB: "Bu cihaz USB girişlerine kapalıdır."
+systemTray:
+  about: "Hakkında"
+  lockState: "Kilit Durumu"
+  onTitle: "Açık"
+  offTitle: "Kapalı"
+  quit: "Çıkış"
+panelTitles:
+  success: "Başarılı!"
+  error: "Hata!"
